@@ -1,4 +1,4 @@
-package com.yacoding.netty;
+package com.yacoding.rpc.tcp.server.netty;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBuf;
@@ -53,15 +53,12 @@ public class TCPServer{
                                     socketChannel.pipeline().addLast(
                                             new NettyServerHandler()
                                     );
-
                                     // 可以继续调用 socketChannel.pipeline().addLast()
                                     // 添加更多 Handler
                                 }
                             }
                     );
-
             System.out.println("server is ready...");
-
             // 绑定端口，启动服务器，生成一个 channelFuture 对象，
             // ChannelFuture 涉及到 Netty 的异步模型，后面展开讲
             ChannelFuture channelFuture = bootstrap.bind(8080).sync();
@@ -76,7 +73,7 @@ public class TCPServer{
     /**
      * 自定义一个 Handler，需要继承 Netty 规定好的某个 HandlerAdapter（规范）
      * InboundHandler 用于处理数据流入本端（服务端）的 IO 事件
-     * InboundHandler 用于处理数据流出本端（服务端）的 IO 事件
+     * OutboundHandler 用于处理数据流出本端（服务端）的 IO 事件
      */
     static class NettyServerHandler extends ChannelInboundHandlerAdapter {
         /**
@@ -86,14 +83,13 @@ public class TCPServer{
          * @param msg 客户端发送的数据
          * @throws Exception
          */
+
         @Override
         public void channelRead(ChannelHandlerContext ctx, Object msg)
                 throws Exception {
             // 接收客户端发来的数据
-
             System.out.println("client address: "
                     + ctx.channel().remoteAddress());
-
             // ByteBuf 是 Netty 提供的类，比 NIO 的 ByteBuffer 性能更高
             ByteBuf byteBuf = (ByteBuf) msg;
             System.out.println("data from client: "
@@ -123,8 +119,7 @@ public class TCPServer{
 
         /**
          * 发生异常时执行
-         *
-         * @param ctx   上下文对象
+         * @param ctx 上下文对象
          * @param cause 异常对象
          * @throws Exception
          */
